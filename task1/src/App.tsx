@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { ProductList } from './pages/ProductList'
 import { BrowserRouter, Route, Routes } from 'react-router'
@@ -7,7 +7,19 @@ import { ShoppingCart } from './pages/ShoppingCart'
 import type { Product } from './types/Products'
 
 function App() {
-  const [cartItems, setCartItems] = useState([])
+  const [cartItems, setCartItems] = useState<Product[]>(() => {
+    try {
+      const items = localStorage.getItem('products')
+      return items ? JSON.parse(items) : []
+    } catch (error) {
+      console.error(error)
+      return []
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(cartItems))
+  }, [cartItems])
 
   const addToCart = (product: Product) => {
     setCartItems([...cartItems, product])
@@ -23,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<ProductList add={addToCart} remove={removeFromCart} />} />
-            <Route path='cart' element={<ShoppingCart products={cartItems} remove={removeFromCart} />} />
+            <Route path='cart' element={<ShoppingCart remove={removeFromCart} />} />
           </Route>
         </Routes>
       </BrowserRouter>
@@ -32,3 +44,4 @@ function App() {
 }
 
 export default App
+

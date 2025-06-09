@@ -1,6 +1,7 @@
 import type { Product } from "../types/Products"
 
-export function ShoppingCart({ products = [], remove = () => {} }) {
+export function ShoppingCart(remove = () => { }) {
+    const products = JSON.parse(localStorage.getItem('products') || '[]')
     const total = products.reduce((acc, product) => acc + Number(product?.price.replace(/[^\d.-]/g, '')), 0)
     return (
         <>
@@ -99,3 +100,4 @@ export function ShoppingCart({ products = [], remove = () => {} }) {
 
     )
 }
+
